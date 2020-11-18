@@ -1,0 +1,8 @@
+{
+  "navigationBarBackgroundColor": "#C22A1E",
+  "usingComponents": {
+    "l-icon":"/miniprogram_npm/lin-ui/icon/index",
+    "post":"/components/post/index"
+  },
+  "navigationBarTitleText": "文与字"
+}
