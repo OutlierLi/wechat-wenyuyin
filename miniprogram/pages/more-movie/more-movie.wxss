@@ -8,6 +8,11 @@
   justify-content: space-between;
 }
 
+.container::after{
+  content: '';
+  width: 200rpx;
+}
+
 .movie{
   margin-bottom: 30rpx;
 }

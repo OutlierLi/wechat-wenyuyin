@@ -36,6 +36,7 @@
   ],
   "usingComponents": {
     "movie": "/components/movie/index",
-    "l-rate":"/miniprogram_npm/lin-ui/rate/index"
+    "l-rate":"/miniprogram_npm/lin-ui/rate/index",
+    "l-icon": "/miniprogram_npm/lin-ui/icon/index"
   }
 }

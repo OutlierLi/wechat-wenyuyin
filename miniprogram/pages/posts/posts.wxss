@@ -8,6 +8,10 @@ swiper image{
   height: 460rpx;
 }
 
+.swipercontainer{
+  margin-bottom: 50rpx;
+}
+
 .post-container{
   display: flex;
   flex-direction: column;

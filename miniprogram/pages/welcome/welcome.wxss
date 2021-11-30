@@ -17,24 +17,24 @@
 }
 
 .motto{
-  margin-top: 100rpx;
-  font-size: 32rpx;
+  margin-top: 150rpx;
+  font-size: 42rpx;
   font-weight: bold;
 }
 
 .journey-container{
   border: 1px solid #405f80;
-  width: 200rpx;
-  height: 80rpx;
+  width: 300rpx;
+  height: 100rpx;
   border-radius: 5px;
   text-align: center;
-  margin-top: 200rpx;
+  margin-top: 300rpx;
 }
 
 .journey{
-  font-size: 22rpx;
+  font-size: 30rpx;
   color: #405f80;
-  line-height: 80rpx;
+  line-height: 100rpx;
   font-weight: bold;
 }
 

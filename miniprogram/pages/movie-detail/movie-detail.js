@@ -1,5 +1,6 @@
-// pages/movie-detail/movie-detail.js
 const app = getApp()
+const db = wx.cloud.database()
+const _ = db.command
 import {convertToCastString, convertToCastInfos} from '../util/util.js'
 Page({
 
@@ -15,17 +16,13 @@ Page({
    */
   onLoad: function (options) {
     const mid = options.mid
-    console.log(mid)
-    wx.request({
-      url: app.gBaseUrl + 'subject/' + mid,
-      success:(res)=>{
-        console.log(res.data)
-        this.processMovieData(res.data)
-        /*
-        this.setData({
-          movie:res.data
-        })
-        */
+    db.collection("all_movies").get().then(res=>{
+      const all_movies = res.data[0].subjects
+      for(var i in all_movies){
+        if(all_movies[i].id == mid){
+          this.processMovieData(all_movies[i])
+          break
+        }
       }
     })
   },
@@ -51,7 +48,7 @@ Page({
 
   onViewPost(event){
     wx.previewImage({
-      urls: [this.data.movie.images.large],
+      urls: [this.data.movie.image],
     })
   },
 

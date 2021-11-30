@@ -1,4 +1,3 @@
-// components/movie-list/index.js
 Component({
   externalClasses:['f-class'],
     /*外部样式类*/

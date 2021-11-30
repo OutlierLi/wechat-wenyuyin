@@ -1,5 +1,5 @@
-// pages/movies/movies.js
 const app = getApp()
+const db = wx.cloud.database()
 Page({
 
   /**
@@ -17,53 +17,28 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    //const that = this
-    wx.request({
-      url: app.gBaseUrl + 'in_theaters',
-      method:'GET',
-      data:{
-        start:0,
-        count:3
-      },
-      //success(res){
-      success:(res)=>{
-        console.log(res)
-        //res.data.subjects[0]
-        //this.setData({
-        //that.setData({
-        this.setData({
-          inTheaters:res.data.subjects
-        })
-      }
+  
+    db.collection("movie_in_theaters_three").get().then(res=>{
+      //console.log(res.data[0].subjects)
+      this.setData({
+        inTheaters:res.data[0].subjects
+      })
     })
 
-    wx.request({
-      url: app.gBaseUrl + 'coming_soon?start=0&count=3',
-      //success(res){
-      success:(res)=>{
-        console.log(res)
-        //res.data.subjects[0]
-        //this.setData({
-        //that.setData({
-        this.setData({
-          comingSoon:res.data.subjects
-        })
-      }
+    db.collection("movie_coming_soon_three").get().then(res=>{
+      //console.log(res.data[0].subjects)
+      this.setData({
+        comingSoon:res.data[0].subjects
+      })
     })
 
-    wx.request({
-      url: app.gBaseUrl + 'top250?start=0&count=3',
-      //success(res){
-      success:(res)=>{
-        console.log(res)
-        //res.data.subjects[0]
-        //this.setData({
-        //that.setData({
-        this.setData({
-          top250:res.data.subjects
-        })
-      }
+    db.collection("movie_top250_three").get().then(res=>{
+      //console.log(res.data[0].subjects)
+      this.setData({
+        top250:res.data[0].subjects
+      })
     })
+    
   },
 
   /**
@@ -123,19 +98,23 @@ Page({
   },
 
   onConfirm(event){
-    console.log(event)
+    //console.log(event)
     this.setData({
-      searchResult:true
+      searchResult:true,
+      searchData:[]
     })
-    wx.request({
-      url: app.gBaseUrl + 'search',
-      data:{
-        q:event.detail.value
-      },
-      success:(res)=>{
-        this.setData({
-          searchData:res.data.subjects
-        })
+    const search = event.detail.value
+    db.collection("all_movies").get().then(res=>{
+      //console.log(res.data[0].subjects)
+      const movies = res.data[0].subjects
+      for(var i in movies){
+        if(movies[i].title.indexOf(search)!=-1){
+          console.log(i)
+          this.setData({
+            searchData:this.data.searchData.concat(movies[i])
+          })
+          //console.log(this.data.searchData)
+        }
       }
     })
   },

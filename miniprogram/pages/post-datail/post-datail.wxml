@@ -1,7 +1,7 @@
 <view class="container">
-  <image class="head-image" src="{{postData.headImgSrc}}"></image>
-  <image wx:if="{{!isPlaying}}" bind:tap="onMusicStart" class="audio" src="/images/music/music-start.png"/>
-  <image wx:else bind:tap="onMusicPause" class="audio" src="/images/music/music-stop.png"/>
+  <image class="head-image" mode="widthFix" src="{{postData.headImgSrc}}"></image>
+  <image wx:if="{{!isPlaying}}" bind:tap="onMusicStart" class="audio" src="cloud://yuntest-9gld9lhq4543f5d8.7975-yuntest-9gld9lhq4543f5d8-1304175252/icon/music-start.png"/>
+  <image wx:else bind:tap="onMusicPause" class="audio" src="cloud://yuntest-9gld9lhq4543f5d8.7975-yuntest-9gld9lhq4543f5d8-1304175252/icon/music-stop.png"/>
   <view class="author-date">
     <image class="avatar" src="{{postData.avatar}}"></image>
     <text class="author">{{postData.author}}</text>
@@ -11,11 +11,13 @@
   <text class="title">{{postData.title}}</text>
   <view class="tool">
     <view class="circle">
-      <image wx:if="{{!collected}}" bind:tap="onCollect" class="" src="/images/icon/collection-anti.png"></image>
-      <image wx:else="{{!collected}}" bind:tap="onCollect" class="" src="/images/icon/collection.png"></image>
-      <image bind:tap="onShare" class="share-img" src="/images/icon/share.png"></image>
+      <image wx:if="{{!collected}}" bind:tap="onCollect" class="" src="cloud://yuntest-9gld9lhq4543f5d8.7975-yuntest-9gld9lhq4543f5d8-1304175252/icon/collection-anti.png"></image>
+      <image wx:else="{{!collected}}" bind:tap="onCollect" class="" src="cloud://yuntest-9gld9lhq4543f5d8.7975-yuntest-9gld9lhq4543f5d8-1304175252/icon/collection.png"></image>
+      <image bind:tap="onShare" class="share-img" src="cloud://yuntest-9gld9lhq4543f5d8.7975-yuntest-9gld9lhq4543f5d8-1304175252/icon/share.png"></image>
     </view>
     <view class="horizon"></view>
   </view>
-  <text class="detail">{{postData.detail}}</text>
+  <block wx:for="{{postData.detail}}" wx:key="index">
+    <text class="detail">{{item}}</text>
+  </block>
 </view>

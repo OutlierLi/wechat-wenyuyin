@@ -1,4 +1,3 @@
-// components/movie/index.js
 Component({
   /**
    * 组件的属性列表

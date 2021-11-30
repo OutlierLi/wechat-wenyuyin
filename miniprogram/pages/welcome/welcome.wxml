@@ -1,10 +1,7 @@
-<!--pages/welcome/welcome.wxml-->
-
 <view class="container"> 
   <l-avatar l-text-class="l-avatar-text" class="l-avatar" placement="bottom" shape="circle" open-data="{{['userAvatarUrl','userNickName']}}" size="180"></l-avatar>
-  <text class="motto">Hello,阿鲲</text>
-  <!--<button>开启小程序之旅</button>-->
+  <text class="motto">Hello!</text>
   <view bind:tap="onTap" class="journey-container">
-    <text class="journey">开启小程序之旅</text>
+    <text class="journey">开启文与影之旅</text>
   </view>
 </view>

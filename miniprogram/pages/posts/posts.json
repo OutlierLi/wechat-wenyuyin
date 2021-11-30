@@ -4,5 +4,7 @@
     "l-icon":"/miniprogram_npm/lin-ui/icon/index",
     "post":"/components/post/index"
   },
-  "navigationBarTitleText": "文与字"
+  "navigationBarTitleText": "文与字",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
 }

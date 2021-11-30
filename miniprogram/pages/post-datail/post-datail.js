@@ -1,8 +1,8 @@
-// pages/post-datail/post-datail.js
-import {postList} from '../../data/data.js'
+const db = wx.cloud.database()
+const _ = db.command
 const app = getApp()
-//console.log(app.test)
-//缓存 localstorage 与全局变量相比永久存在
+
+
 Page({
 
   /**
@@ -15,20 +15,31 @@ Page({
     isPlaying:false,
     _postsCollected:{},
     _mgr:null,
-    //做数据绑定不加下划线
+    postList:[]
   },
 
+  getData(event){
+    var id = parseInt(event)
+    console.log(id)
+    db.collection("postslist").where({
+      postId:_.eq(id)
+    }).get().then(res=>{
+      console.log(res.data)
+      this.setData({
+        postList:res.data,
+        postData:res.data[0]
+      })
+    })
+  },
+  
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
-    //wx.setStorageSync('posts_collected', undefined)
-    const postData = postList[options.pid]
+    this.getData(options.pid)
     this.data._pid = options.pid
 
     const postsCollected = wx.getStorageSync('posts_collected')
-    //this.data._postsCollected = postsCollected
 
     if(postsCollected){
       this.data._postsCollected = postsCollected
@@ -37,21 +48,23 @@ Page({
     let collected = postsCollected[this.data._pid]
 
     if(collected === undefined){
-      //如果为undefined代表文章从来没有被收藏过
       collected = false
     }
 
     this.setData({
-      postData,
       collected,
       isPlaying:this.currentMusicIsPlaying()
     })
 
     const mgr = wx.getBackgroundAudioManager()
     this.data._mgr = mgr
-    mgr.onPlay(this.onMusicStart)
-    //mgr.onStop(this.onMusicStop)
-    mgr.onPause(this.onMusicPause)
+    // if(app.gIsPlayingMusic){
+    //mgr.onPlay(this.onMusicStart)
+    // }
+    // else{
+    //console.log(1)
+    //mgr.onPause(this.onMusicPause)
+    // }
   },
 
   currentMusicIsPlaying(){
@@ -66,15 +79,14 @@ Page({
 
   onMusicStart(event){
     const mgr = this.data._mgr
-    //mgr.onPlay(()=>{
-      //console.log(123)
-    //})
-    const music = postList[this.data._pid].music
+
+    const music = this.data.postData.music
 
     mgr.src = music.url
     mgr.title = music.title
     mgr.coverImgUrl = music.coverImg
 
+    //mgr.play()
     app.gIsPlayingMusic = true
     app.gIsPlayingPostId = this.data._pid
 
@@ -91,49 +103,30 @@ Page({
     this.setData({
       isPlaying:false
     })
-    //
   },
 
   onShare(event){
     wx.showActionSheet({
       itemList: ['分享到QQ','分享到微信','分享到朋友圈','分享到微博'],
-      success(res){
-        console.log(res)
-      }
+      // success(res){
+      //   console.log(res)
+      // }
     })
   },
 
   async onCollect(event){
-    //假设未收藏 -> 收藏
-    //哪篇文章被收藏
-    //数据结构 可以表示多篇文章被收藏
+
     const postsCollected = this.data._postsCollected
     postsCollected[this.data._pid] = !this.data.collected
     wx.setStorageSync('posts_collected', postsCollected)
-    //this.data.collected = true
     
     wx.showToast({
       title: this.data.collected?'取消收藏':'收藏成功',
       duration:3000
-    })//轻提示
-/*
-//模态提示
-    const result = await wx.showModal({
-      title:this.data.collected?'是否取消收藏':'是否收藏文章',
     })
-    if(result.confirm){
-      const postsCollected = this.data._postsCollected
-      postsCollected[this.data._pid] = !this.data.collected
-      wx.setStorageSync('posts_collected', postsCollected)
-      this.setData({
-        collected:!this.data.collected
-        //该处的顺序很重要
-      })
-    }
-*/
+
     this.setData({
       collected:!this.data.collected
-      //该处的顺序很重要
     })
   },
 
@@ -169,7 +162,7 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-
+    
   },
 
   /**
@@ -183,6 +176,6 @@ Page({
    * 用户点击右上角分享
    */
   onShareAppMessage: function () {
-
-  }
+  
+   }
 })

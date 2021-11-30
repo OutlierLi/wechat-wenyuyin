@@ -1,9 +1,5 @@
-// pages/welcome/posts/posts.js
-
-//var postData = require("../../data/data.js")
-//console.log(postData)
-import{postList} from '../../data/data.js'
-//console.log(postList)
+const db = wx.cloud.database()
+const _ = db.command
 
 Page({
 
@@ -11,51 +7,26 @@ Page({
    * 页面的初始数据
    */
   data: {
-    //a:"2020LPL夏季季后赛观赛指南",
-    //flag:true,
-    
+    dataList:[],
+    postList:[]
+  },
+
+  getPostsData(num=4, page=0){
+    db.collection("postslist").skip(page).limit(num).get().then(res=>{
+      var oldData = this.data.dataList
+      var newData = oldData.concat(res.data)
+      this.setData({
+        postList:newData,
+        dataList:newData
+      })
+    })
   },
 
   /**
    * 生命周期函数--监听页面加载1
    */
-  onLoad: async function (options) {
-    //this.setData({
-      //b:"2021"
-    //})
-    //this.setData(postList)
-
-    //wx.setStorageSync('flag', true)
-    //设置缓存
-    //wx.setStorageSync('flag', false)
-    //wx.removeStorageSync('flag')//删除缓存
-    //wx.setStorageSync('flag1', 1)
-    //wx.clearStorageSync()
-    //即使把该段代码注释，依旧存在缓存，相当于前端数据库
-
-    //wx.setStorageSync('flag', 1)
-    //const flag = wx.getStorageSync('flag')
-    
-    //const flag = await wx.getStorage({
-      //key: 'flag',
-      //success(value){
-      //  console.log(value.data)
-      //}
-
-    //})
-
-    //flag.then((value)=>{
-    //  console.log(value)
-    //})
-
-    //console.log(flag)
-
-
-    this.setData({
-      //posts:postList
-      postList
-      //posts
-    })
+  onLoad: function (options) {
+    this.getPostsData(4,0)
   },
 
     /**
@@ -90,14 +61,25 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-
+    this.setData({
+      dataList:[]
+    })
+    this.getPostsData()
+    wx.showNavigationBarLoading() //在标题栏中显示加载
+    setTimeout(function()
+    {
+      wx.hideNavigationBarLoading() //完成停止加载
+      wx.stopPullDownRefresh() //停止下拉刷新
+    },1500);
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-
+    var page = this.data.dataList.length
+    console.log(page)
+    this.getPostsData(4,page)
   },
 
   /**
@@ -109,16 +91,9 @@ Page({
 
   onGoToDetail(event){
     const pid = event.detail.pid | event.currentTarget.dataset.postId
+    //this.upDate(pid)
     wx.navigateTo({
       url: '/pages/post-datail/post-datail?pid='+pid
     })
   },
-
-  /*onGoToDetail1(event){
-    const pid = event.currentTarget.dataset.postId
-    wx.navigateTo({
-      url: '/pages/post-datail/post-datail?pid='+pid
-    })
-  },*/
-
 })

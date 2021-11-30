@@ -1,4 +1,6 @@
 const app = getApp()
+const db = wx.cloud.database()
+const _ = db.command
 Page({
 
   /**
@@ -6,7 +8,8 @@ Page({
    */
   data: {
     movies:[],
-    _type:''
+    _type:'',
+    num:1
   },
 
   /**
@@ -15,19 +18,16 @@ Page({
   onLoad: function (options) {
     const type = options.type
     this.data._type = type
-    wx.request({
-      url: app.gBaseUrl + type,
-      method:'GET',
-      data:{
-        start:0,
-        count:12
-      },
-      success:(res)=>{
-        console.log(res)
-        this.setData({
-          movies:res.data.subjects
-        })
-      }
+    const num = this.data.num
+    db.collection("movies_"+type).where({
+      pagesnumber:_.eq(num)
+    }).get().then(res=>{
+      console.log(res)
+      this.setData({
+        movies:this.data.movies.concat(res.data[0].subjects),
+        num:num+1,
+        maxpages:res.data[0].maxpages
+      })
     })
 
   },
@@ -78,19 +78,14 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-    wx.request({
-      url: app.gBaseUrl + this.data._type,
-      method:'GET',
-      data:{
-        start:0,
-        count:12
-      },
-      success:(res)=>{
-        this.setData({
-          movies:res.data.subjects
-        })
-        wx.stopPullDownRefresh()
-      }
+    db.collection("movies_"+this.data._type).where({
+      pagesnumber:_.eq(1)
+    }).get().then(res=>{
+      this.setData({
+        movies:res.data[0].subjects,
+        num:2
+      })
+      wx.stopPullDownRefresh()
     })
   },
 
@@ -98,22 +93,20 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-    wx.showNavigationBarLoading()
-    wx.request({
-      url: app.gBaseUrl + this.data._type,
-      method:'GET',
-      data:{
-        start:this.data.movies.length,
-        count:12
-      },
-      success:(res)=>{
-        console.log(res)
-        this.setData({
-          movies:this.data.movies.concat(res.data.subjects)
-        })
-        wx.hideNavigationBarLoading()
-      }
+    const num = this.data.num
+    if(num <= this.data.maxpages){
+      wx.showNavigationBarLoading()
+      db.collection("movies_"+this.data._type).where({
+      pagesnumber:_.eq(num)
+    }).get().then(res=>{
+      console.log(res.data[0].subjects)
+      this.setData({
+        movies:this.data.movies.concat(res.data[0].subjects),
+        num:num+1
+      })
+      wx.hideNavigationBarLoading()
     })
+    }
   },
 
   /**
